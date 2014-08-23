@@ -32,4 +32,3 @@ summary(LSModel_inf)
 
 bf <- BayesFactor(BGModel_inf, ATTModel_inf, LSModel_inf, FullModel_inf)
 print(bf)
-

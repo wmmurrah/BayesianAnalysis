@@ -75,4 +75,3 @@ xlab("Observed") + ylab("Replicated")
 pdf(file=' ') #####ADD FILE PATH######
 hist(FullModel_inf[,11], main = "Histogram of posterior draws for Sigma", xlab = "Sigma")
 #dev.off()
-

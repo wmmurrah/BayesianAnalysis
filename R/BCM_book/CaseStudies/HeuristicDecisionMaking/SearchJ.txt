@@ -1,0 +1,35 @@
+# Individual Search Orders
+model{   
+  # Data
+  for (i in 1:ns){
+    for (q in 1:nq){
+      y[i,q] ~ dbern(ttb[t[i,q]])
+      ypred[i,q] ~ dbern(ttb[t[i,q]])
+    }
+  }
+  # One Reason Model, With Different Search Order Per Subject
+  for (i in 1:ns){
+    for (q in 1:nq){	
+      # Add Cue Contributions To Mimic TTB Decision
+      for (j in 1:nc){
+        tmp1[i,q,j] <- (m[p[q,1],j]-m[p[q,2],j])*pow(2,s[i,j]-1)
+      }
+      # Find if Cue Favors First, Second, or Neither Stimulus
+      tmp2[i,q] <- sum(tmp1[i,q,1:nc])
+      tmp3[i,q] <- -1*step(-tmp2[i,q])+step(tmp2[i,q])
+      t[i,q] <- tmp3[i,q]+2
+    }
+    # Cue Search Order From Ranking stmp
+    s[i,1:nc] <- rank(stmp[i,1:nc])
+	stmp[i,1] <- 0
+    for (j in 2:nc){
+      stmp[i,j] ~ dnorm(0,.001)
+    }
+  }
+  # Choose TTB Decision With Probability Gamma, or Guess
+  ttb[1] <- 1-gamma
+  ttb[2] <- 0.5
+  ttb[3] <- gamma
+  # Prior
+  gamma ~ dunif(0.5,1)
+}

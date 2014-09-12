@@ -1,0 +1,18 @@
+# One-Sample Order Restricted Comparison of Means
+model{
+  # Data
+  for (i in 1:ndata){
+    x[i] ~ dnorm(mu,lambda)
+  } 
+  mu <- delta*sigma
+  lambda <- pow(sigma,-2)
+  # delta and sigma Come From (Half) Cauchy Distributions
+  lambdadelta ~ dchisqr(1)
+  delta ~ dnorm(0,lambdadelta)I(,0)
+  lambdasigma ~ dchisqr(1)
+  sigmatmp ~ dnorm(0,lambdasigma)
+  sigma <- abs(sigmatmp)
+  # Sampling from Prior Distribution for Delta
+  deltaprior ~ dnorm(0,lambdadeltaprior)I(,0)
+  lambdadeltaprior ~ dchisqr(1)
+}

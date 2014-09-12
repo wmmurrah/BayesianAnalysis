@@ -1,0 +1,30 @@
+% Data
+k = 5;
+n = 10;
+
+% WinBUGS Parameters
+nchains = 2; % How Many Chains?
+nburnin = 0; % How Many Burn in Samples?
+nsamples = 2e4;  % How Many Recorded Samples?
+nthin = 1; % How Often is a Sample Recorded?
+
+% Assign Matlab Variables to the Observed WinBUGS Nodes
+datastruct = struct('k',k,'n',n);
+
+% Initialize Unobserved Variables
+start.theta= [0.1 0.9];
+
+for i=1:nchains
+    S.theta = start.theta(i); % An Intial Value for the Success Rate
+    init0(i) = S;
+end
+
+% Use WinBUGS to Sample
+[samples, stats] = matbugs(datastruct, ...
+    fullfile(pwd, 'Rate_1.txt'), 
+    'init', init0, 'view', 1, ...
+    'nChains', nchains, 'nburnin', nburnin, ...
+    'nsamples', nsamples, 'thin', nthin, ...
+    'DICstatus', 0, 'refreshrate',100, ...
+    'monitorParams', {'theta'}, ...
+    'Bugdir', 'C:/Program Files/WinBUGS14');

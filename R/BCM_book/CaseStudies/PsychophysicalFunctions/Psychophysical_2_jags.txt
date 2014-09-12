@@ -1,0 +1,38 @@
+# Logistic Psychophysical Function with Contaminants
+model{
+  for (i in 1:nsubjs){
+    for (j in 1:nstim[i]){
+      z[i,j] ~ dbern(phi[i])
+      z1[i,j] <- z[i,j] + 1
+      thetalim[i,j,2] <- pi[i,j]
+      pi[i,j] ~ dbeta(1,1)
+      r[i,j] ~ dbin(thetalim[i,j,z1[i,j]],n[i,j])
+      logit(thetalim[i,j,1]) <- lthetalim[i,j]
+      lthetalim[i,j] <- min(999,max(-999,ltheta[i,j]))
+      ltheta[i,j] <- alpha[i]+beta[i]*(x[i,j]-xmean[i])
+    }
+    phi[i] <- phi(probitphilim[i])
+    probitphilim[i] <- min(5, max(-5,probitphi[i]))
+    probitphi[i] ~ dnorm(mup,lambdap)
+    beta[i] ~ dnorm(mub,lambdab)
+    alpha[i] ~ dnorm(mua,lambdaa)
+  }
+  # Priors
+  mub ~ dnorm(0,.001)    
+  mua ~ dnorm(0,.001)
+  sigmab  ~ dunif(0,1000)
+  sigmaa  ~ dunif(0,1000)
+  lambdab <- pow(sigmab,-2)
+  lambdaa <- pow(sigmaa,-2)
+  mup ~ dnorm(0,1)
+  sigmap ~ dunif(0,3)
+  lambdap <- pow(sigmap,-2)
+  # The hack: assign "999" to values of z[i,j] that are irrelevant:
+  for (i in 1:nsubjs)
+  {
+    for (j in (nstim[i]+1):30) 
+    {
+      z[i,j] <- 999
+    }
+  }
+}

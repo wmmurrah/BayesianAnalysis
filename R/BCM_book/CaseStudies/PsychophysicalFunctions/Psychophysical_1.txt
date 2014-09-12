@@ -1,0 +1,20 @@
+# Logistic Psychophysical Function
+model{
+  for (i in 1:nsubjs){
+    for (j in 1:nstim[i]){
+      r[i,j] ~ dbin(thetalim[i,j],n[i,j])
+      logit(thetalim[i,j]) <- lthetalim[i,j]
+      lthetalim[i,j] <- min(999,max(-999,ltheta[i,j]))
+      ltheta[i,j] <- alpha[i]+beta[i]*(x[i,j]-xmean[i])
+    }
+    beta[i] ~ dnorm(mub,lambdab)
+    alpha[i] ~ dnorm(mua,lambdaa)
+  }
+  # Priors
+  mub ~ dnorm(0,.001)    
+  mua ~ dnorm(0,.001)
+  sigmab ~ dunif(0,1000)
+  sigmaa ~ dunif(0,1000)
+  lambdab <- pow(sigmab,-2)
+  lambdaa <- pow(sigmaa,-2)
+}

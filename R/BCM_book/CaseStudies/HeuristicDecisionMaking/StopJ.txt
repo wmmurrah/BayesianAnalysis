@@ -1,0 +1,49 @@
+# Stop
+model{
+  # Data
+  for (i in 1:ns){
+    for (q in 1:nq){
+      y[i,q] ~ dbern(ttb[t[i,q,z1[i]]])
+      ypred[i,q] ~ dbern(ttb[t[i,q,z1[i]]])
+    }
+  }	  
+  # TTB Decision
+  for (i in 1:ns){
+    for (q in 1:nq){	
+      # Add Cue Contributions To Mimic TTB Decision
+      for (j in 1:nc){
+        tmp1[i,q,j] <- (m[p[q,1],j]-m[p[q,2],j])*pow(2,s[j]-1)
+      }
+      # Find if Cue Favors First, Second, or Neither Stimulus
+      tmp2[i,q] <- sum(tmp1[i,q,1:nc])
+      tmp3[i,q] <- -1*step(-tmp2[i,q])+step(tmp2[i,q])
+      t[i,q,1] <- tmp3[i,q]+2
+    }
+  }
+  # WADD Decision
+  for (i in 1:ns){
+    for (q in 1:nq){
+      for (j in 1:nc){
+        tmp4[i,q,j] <- (m[p[q,1],j]-m[p[q,2],j])*x[j]
+      }
+      # Find if Cue Favors First, Second, or Neither Stimulus
+      tmp5[i,q] <- sum(tmp4[i,q,1:nc])
+      tmp6[i,q] <- -1*step(-tmp5[i,q])+step(tmp5[i,q])
+      t[i,q,2] <- tmp6[i,q]+2
+    }
+  }
+  # Follow Decision With Probability Gamma, or Guess
+  ttb[1] <- 1-gamma
+  ttb[2] <- 0.5
+  ttb[3] <- gamma
+  # Cue Search Order Follows Validities
+  s[1:nc] <- rank(v[1:nc])
+  # TTB and WADD Subjects in Latent Mixture
+  for (i in 1:ns){
+    z[i] ~ dbern(phi)
+    z1[i] <- z[i]+1
+  }
+  # Priors
+  gamma ~ dunif(0.5,1)
+  phi ~ dbeta(1,1)
+}

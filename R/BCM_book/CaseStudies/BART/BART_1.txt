@@ -1,0 +1,15 @@
+# BART Model of Risky Decision-Making
+model{
+  # Optimal Number of Pumps
+  omega <- -gplus/log(1-p)
+  # Choice Data
+  for (j in 1:ntrials){
+    for (k in 1:options[j]){
+      theta[j,k] <- 1-(1/(1+max(-15,min(15,exp(beta*(k-omega))))))
+      d[j,k] ~ dbern(theta[j,k])
+    }
+  }
+  # Priors
+  gplus ~ dunif(0,10)
+  beta ~ dunif(0,10)
+}

@@ -1,0 +1,23 @@
+# Geurts, Order Restricted
+model{
+  for (i in 1:nsc){
+    kc[i] ~ dbin(thetac[i],nc[i])
+    thetac[i] <- phi(phic[i])
+    phic[i] ~ dnorm(muc,lambda)
+  }
+  for (j in 1:nsa){
+    ka[j] ~ dbin(thetaa[j],na[j])
+    thetaa[j] <- phi(phia[j])
+    phia[j] ~ dnorm(mua,lambda)
+  }
+  muc <- mu+alpha/2
+  mua <- mu-alpha/2
+  # Priors
+  mu ~ dnorm(0,1)
+  sigma ~ dunif(0,10)
+  alpha <- delta*sigma
+  lambda <- pow(sigma,-2)	
+  delta ~ dnorm(0,1)T(0,)
+  # Sampling from Prior Distribution for Delta
+  deltaprior ~ dnorm(0,1)
+}

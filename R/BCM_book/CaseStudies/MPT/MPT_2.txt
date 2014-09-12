@@ -1,0 +1,47 @@
+# Multinomial Processing Tree with Latent Traits
+model{
+  for (i in 1:nsubjs){
+    # MPT Category Probabilities for Word Pairs
+    theta[i,1] <- c[i] * r[i]
+    theta[i,2] <- (1-c[i])*pow(u[i],2)
+    theta[i,3] <- (1-c[i])*2*u[i]*(1-u[i])
+    theta[i,4] <- c[i]*(1-r[i])+(1-c[i])*pow(1-u[i],2)
+    # Data       
+    k[i,1:4] ~ dmulti(theta[i,1:4],n[i])
+    # Probitize Parameters c, r, and u 
+    c[i] <- phi(muchat + xichat*deltachat[i])
+    r[i] <- phi(murhat + xirhat*deltarhat[i])
+    u[i] <- phi(muuhat + xiuhat*deltauhat[i])
+    # Individual Effects
+    deltahat[i,1:nparams] ~
+       dmnorm(mudeltahat[1:nparams],SigmaInv[1:nparams,1:nparams])
+    deltachat[i] <- deltahat[i,1]
+    deltarhat[i] <- deltahat[i,2]
+    deltauhat[i] <- deltahat[i,3]
+  }
+  # Priors
+  mudeltahat[1] <- 0
+  mudeltahat[2] <- 0
+  mudeltahat[3] <- 0
+  muchat ~ dnorm(0,1)
+  murhat ~ dnorm(0,1)
+  muuhat ~ dnorm(0,1)
+  xichat ~ dunif(0,100)
+  xirhat ~ dunif(0,100)
+  xiuhat ~ dunif(0,100)
+  df <- nparams+1
+  SigmaInv[1:nparams,1:nparams] ~ dwish(I[1:nparams,1:nparams],df)
+  # Post-Processing Means, Standard Deviations, Correlations
+  muc <- phi(muchat)
+  mur <- phi(murhat)
+  muu <- phi(muuhat)
+  Sigma[1:nparams,1:nparams] <- inverse(SigmaInv[1:nparams,1:nparams])
+  sigmac <- xichat*sqrt(Sigma[1,1])
+  sigmar <- xirhat*sqrt(Sigma[2,2])
+  sigmau <- xiuhat*sqrt(Sigma[3,3])
+  for (i1 in 1:nparams){
+    for (i2 in 1:nparams){
+      rho[i1,i2] <- Sigma[i1,i2]/sqrt(Sigma[i1,i1]*Sigma[i2,i2])
+    }
+  }
+}

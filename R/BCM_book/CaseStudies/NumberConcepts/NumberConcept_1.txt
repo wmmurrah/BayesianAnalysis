@@ -1,0 +1,58 @@
+# Knower Level Model Applied to Give-N Data
+model{
+  # Data
+  for (i in 1:ns){
+    for (j in 1:gnq[i]){  
+      # Probability a z[i]-Knower Will Answer ga[i,j] to Question gq[i,j]
+      # is a Categorical Draw From Their Distribution over the 1:gn Toys
+      ga[i,j] ~ dcat(npiprime[z[i],gq[i,j],1:gn])
+    }
+    # Posterior Predictive
+    for (j in 1:gn){
+      predga[i,j] ~ dcat(npiprime[z[i],j,1:gn])
+    }
+  }
+  # Model
+  for (i in 1:nz){
+    for (j in 1:gn){
+      for (k in 1:gn){
+        piprimetmp[i,j,k,1] <- pi[k]
+        piprimetmp[i,j,k,2] <- 1/v*pi[k]
+        piprimetmp[i,j,k,3] <- v*pi[k]
+        # Will be 1 if Knower-Level (i.e, i-1) is Same or Greater than Answer
+        ind1[i,j,k] <- step((i-1)-k)
+        # Will be 1 for the Possible Answer that Matches the Question
+        ind2[i,j,k] <- equals(k,j)
+        # Will be 1 for 0-Knowers
+        ind3[i,j,k] <- equals(i,1)
+        # Will be 1 for HN-Knowers
+        ind4[i,j,k] <- equals(i,nz)
+        ind5[i,j,k] <- ind3[i,j,k]+ind4[i,j,k]*(2+ind2[i,j,k])
+                       + (1-ind4[i,j,k])*(1-ind3[i,j,k])
+                       * (ind1[i,j,k]+ind1[i,j,k]*ind2[i,j,k]+1)
+        piprime[i,j,k] <- piprimetmp[i,j,k,ind5[i,j,k]]
+        npiprime[i,j,k] <- piprime[i,j,k]/sum(piprime[i,j,1:gn])
+      } 
+    }
+  }
+  # Posterior Prediction For Knower Levels
+  for (i in 1:nz){
+    for (j in 1:gn){
+      predz[i,j] ~ dcat(npiprime[i,j,1:gn])
+    }
+  }      
+  # Base rate
+  for (i in 1:gn){
+    pitmp[i] ~ dunif(0,1)
+    pi[i] <- pitmp[i]/sum(pitmp[1:gn])
+  }
+  predpi ~ dcat(pi[1:gn]) 
+  # Priors   
+  v ~ dunif(1,1000)
+  for (i in 1:ns) {
+    z[i] ~ dcat(priorz[])
+  }
+  for (i in 1:nz){
+    priorz[i] <- 1/6
+  }      
+}  

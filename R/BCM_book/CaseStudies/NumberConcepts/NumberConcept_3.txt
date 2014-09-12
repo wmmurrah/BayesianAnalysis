@@ -1,0 +1,90 @@
+# Knower Level Model Applied to Give-N and Fast-Cards Data
+model{
+  # Give-N Part
+  # Data
+  for (i in 1:ns){
+    for (j in 1:gnq[i]){  
+      ga[i,j] ~ dcat(npiprime[z[i],gq[i,j],1:gn])
+    }
+    # Posterior Predictive
+    for (j in 1:gn){
+      predga[i,j] ~ dcat(npiprime[z[i],j,1:gn])
+    }
+  }
+  # Model
+  for (i in 1:nz){
+    for (j in 1:gn){
+      for (k in 1:gn){
+        piprimetmp[i,j,k,1] <- pi[k]
+        piprimetmp[i,j,k,2] <- 1/gv*pi[k]
+        piprimetmp[i,j,k,3] <- gv*pi[k]
+        ind1[i,j,k] <- step((i-1)-k)
+        ind2[i,j,k] <- equals(k,j)
+        ind3[i,j,k] <- equals(i,1)
+        ind4[i,j,k] <- equals(i,nz)
+        ind5[i,j,k] <- ind3[i,j,k]+ind4[i,j,k]*(2+ind2[i,j,k])
+                       + (1-ind4[i,j,k])*(1-ind3[i,j,k])
+                       * (ind1[i,j,k]+ind1[i,j,k]*ind2[i,j,k]+1)
+        piprime[i,j,k] <- piprimetmp[i,j,k,ind5[i,j,k]]
+        npiprime[i,j,k] <- piprime[i,j,k]/sum(piprime[i,j,1:gn])
+      } 
+    }
+  }
+  # Fast-Cards Part
+  # Data
+  for (i in 1:ns){
+    for (j in 1:fnq[i]){  
+      fa[i,j] ~ dcat(fnpiprime[z[i],fq[i,j],1:fn])
+    }
+    # Posterior Predictive
+    for (j in 1:gn){
+      predfa[i,j] ~ dcat(fnpiprime[z[i],j,1:fn])
+    }
+  }
+  # Model
+  for (i in 1:nz){
+    for (j in 1:gn){
+      for (k in 1:fn){
+        fpiprimetmp[i,j,k,1] <- fpi[k]
+        fpiprimetmp[i,j,k,2] <- 1/fv*fpi[k]
+        fpiprimetmp[i,j,k,3] <- fv*fpi[k]
+        find1[i,j,k] <- step((i-1)-k)
+        find2[i,j,k] <- equals(k,j)
+        find3[i,j,k] <- equals(i,1)
+        find4[i,j,k] <- equals(i,nz)
+        find5[i,j,k] <- find3[i,j,k]+find4[i,j,k]*(2+find2[i,j,k])
+                        + (1-find4[i,j,k])*(1-find3[i,j,k])
+                        * (find1[i,j,k]+find1[i,j,k]*find2[i,j,k]+1)
+        fpiprime[i,j,k]  <- fpiprimetmp[i,j,k,find5[i,j,k]]
+        fnpiprime[i,j,k] <- fpiprime[i,j,k]/sum(fpiprime[i,j,1:fn])
+      } 
+    }
+  }
+  # Posterior Prediction For Knower Levels
+  for (i in 1:nz){
+    for (j in 1:gn){
+      predgaz[i,j] ~ dcat(npiprime[i,j,1:gn])
+      predfaz[i,j] ~ dcat(fnpiprime[i,j,1:fn])
+    }
+  }      
+  # Base rates
+  for (i in 1:fn){
+    fpitmp[i] ~ dunif(0,1)
+    fpi[i] <- fpitmp[i]/sum(fpitmp[1:fn])
+  }
+  for (i in 1:gn){
+    pitmp[i] ~ dunif(0,1)
+    pi[i] <- pitmp[i]/sum(pitmp[1:gn])
+  }
+  predpi  ~ dcat(pi[1:gn]) 
+  predfpi ~ dcat(fpi[1:fn]) 
+  # Priors   
+  gv ~ dunif(1,1000)
+  fv ~ dunif(1,1000)
+  for (i in 1:ns) {
+    z[i] ~ dcat(priorz[])
+  }
+  for (i in 1:nz){
+    priorz[i] <- 1/6
+  }      
+}  

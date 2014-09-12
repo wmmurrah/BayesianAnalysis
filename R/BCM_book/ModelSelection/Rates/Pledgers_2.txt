@@ -1,0 +1,25 @@
+# Pledgers, Order Constrained Rates
+model{
+  # Order Constrained Rates
+  thetap[1:2] ~ dmnorm(mu[],TI[,])
+  theta1 <- phi(cos(angle)*thetap[1]-sin(angle)*abs(thetap[2]))
+  theta2 <- phi(sin(angle)*thetap[1]+cos(angle)*abs(thetap[2]))
+  # Data
+  s1 ~ dbin(theta1,n1)
+  s2 ~ dbin(theta2,n2)
+  # Difference
+  delta <- theta1-theta2  
+  # Prior Sampling
+  thetapprior[1:2] ~ dmnorm(mu[],TI[,])
+  theta1prior <- phi(cos(angle)*thetapprior[1]-sin(angle)*abs(thetapprior[2]))
+  theta2prior <- phi(sin(angle)*thetapprior[1]+cos(angle)*abs(thetapprior[2]))
+  deltaprior  <- theta1prior-theta2prior
+  # Constants
+  angle <- 45*3.1416/180
+  TI[1,1] <- 1
+  TI[1,2] <- 0
+  TI[2,1] <- 0
+  TI[2,2] <- 1
+  mu[1] <- 0
+  mu[2] <- 0
+}

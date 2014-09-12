@@ -1,0 +1,9 @@
+# PCTeX Project File, Version 1.1
+	name: Exams_1
+	texformat: latex
+	typesetmode: DVI
+	spellwordlist: american
+Exams_1.txt
+	wndpos: 1 -1 -1 -8 -30 50 50 1449 706
+	zorder: 0
+	edit: 0

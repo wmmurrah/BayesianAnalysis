@@ -1,0 +1,54 @@
+# Search and Stop
+model{
+  # Data
+  for (i in 1:ns){
+    for (q in 1:nq){
+      y[i,q] ~ dbern(ttb[t[i,q,z1[i,q]]])
+      ypred[i,q] ~ dbern(ttb[t[i,q,z1[i,q]]])
+    }
+  }	  
+  # TTB Decision
+  for (i in 1:ns){
+    for (q in 1:nq){	
+      for (j in 1:nc){
+        tmp1[i,q,j] <- (m[p[q,1],j]-m[p[q,2],j])*pow(2,s[i,j]-1)
+      }
+      tmp2[i,q] <- sum(tmp1[i,q,1:nc])
+      tmp3[i,q] <- -1*step(-tmp2[i,q])+step(tmp2[i,q])
+      t[i,q,1] <- tmp3[i,q]+2
+    }
+  }
+  # WADD Decision
+  for (i in 1:ns){
+    for (q in 1:nq){
+      for (j in 1:nc){
+        tmp4[i,q,j] <- (m[p[q,1],j]-m[p[q,2],j])*x[j]
+      }
+      # Find if Cue Favors First, Second, or Neither Stimulus
+      tmp5[i,q] <- sum(tmp4[i,q,1:nc])
+      tmp6[i,q] <- -1*step(-tmp5[i,q])+step(tmp5[i,q])
+      t[i,q,2] <- tmp6[i,q]+2
+    }
+  }
+  # Follow Decision With Probability Gamma, or Guess
+  ttb[1] <- 1-gamma
+  ttb[2] <- 0.5
+  ttb[3] <- gamma
+  # Cue Search Order From Ranking stmp
+  for (i in 1:ns){
+    s[i,1:nc] <- rank(stmp[i,1:nc])
+	stmp[i,1] <- 0
+    for (j in 2:nc){
+      stmp[i,j] ~ dnorm(0,.001)
+    }
+  }
+  # TTB and WADD Rate Per Subject
+  for (i in 1:ns){
+    phi[i] ~ dbeta(1,1)
+    for (q in 1:nq){
+      z[i,q] ~ dbern(phi[i])
+    }
+  }
+  # Priors
+  gamma ~ dunif(0.5,1)
+}

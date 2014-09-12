@@ -1,0 +1,21 @@
+# Hierarchical Signal Detection Theory
+model{
+  for (i in 1:k){
+    # Observed counts
+    h[i] ~ dbin(thetah[i],s)
+    f[i] ~ dbin(thetaf[i],n)
+    # Reparameterization Using Equal-Variance Gaussian SDT
+    thetah[i] <- phi(d[i]/2-c[i])
+    thetaf[i] <- phi(-d[i]/2-c[i])
+    # Discriminability and Bias
+    c[i] ~ dnorm(muc,lambdac)
+    d[i] ~ dnorm(mud,lambdad)
+  }
+  # Priors
+  muc ~ dnorm(0,.001)
+  mud ~ dnorm(0,.001)
+  lambdac ~ dgamma(.001,.001)
+  lambdad ~ dgamma(.001,.001)
+  sigmac <- 1/sqrt(lambdac)
+  sigmad <- 1/sqrt(lambdad)
+}

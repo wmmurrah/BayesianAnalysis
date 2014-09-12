@@ -1,0 +1,37 @@
+# Hierarchical SIMPLE Model
+model{
+  # Observed data
+  for (x in 1:dsets){
+    for (i in 1:listlength[x]){
+      y[i,x] ~ dbin(theta[i,x],n[x])
+    }
+  }   
+  # Similarities, Discriminabilities, and Response Probabilities
+  for (x in 1:gsets){
+    t[x] <- max(0,min(1,a[1]*w[x]+a[2]))
+    for (i in 1:listlength[x]){
+      for (j in 1:listlength[x]){
+        # Similarities
+        sim[i,j,x] <- exp(-c*abs(log(m[i,x])-log(m[j,x])))
+        # Discriminabilities
+        disc[i,j,x] <- sim[i,j,x]/sum(sim[i,1:listlength[x],x])
+        # Response Probabilities
+        resp[i,j,x] <- 1/(1+exp(-s*(disc[i,j,x]-t[x])))
+      }
+      # Free Recall Overall Response Probability
+      theta[i,x] <- min(1,sum(resp[i,1:listlength[x],x]))
+    }
+  }   
+  # Priors
+  c ~ dunif(0,100)
+  s ~ dunif(0,100)
+  a[1] ~ dunif(-1,0)
+  a[2] ~ dunif(0,1)
+  # Predicted data
+  for (x in 1:gsets){
+    for (i in 1:listlength[x]){
+      predy[i,x] ~ dbin(theta[i,x],n[x])
+      predpc[i,x] <- predy[i,x]/n[x]
+    }
+  }   
+}

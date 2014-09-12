@@ -1,0 +1,29 @@
+# Take The Best
+model{   
+  # Data
+  for (q in 1:nq){
+    for (i in 1:ns){
+      y[i,q] ~ dbern(ttb[t[q]])
+      ypred[i,q] ~ dbern(ttb[t[q]])
+    }
+  }
+  # TTB Model For Each Question
+  for (q in 1:nq){	
+    # Add Cue Contributions To Mimic TTB Decision
+    for (j in 1:nc){
+      tmp1[q,j] <- (m[p[q,1],j]-m[p[q,2],j])*pow(2,s[j]-1)
+    }
+    # Find if Cue Favors First, Second, or Neither Stimulus
+    tmp2[q] <- sum(tmp1[q,1:nc])
+    tmp3[q] <- -1*step(-tmp2[q])+step(tmp2[q])
+    t[q] <- tmp3[q]+2
+  }
+  # Cue Search Order Follows Validities
+  s[1:nc] <- rank(v[1:nc])
+  # Choose TTB Decision With Probability Gamma, or Guess
+  ttb[1] <- 1-gamma
+  ttb[2] <- 0.5
+  ttb[3] <- gamma
+  # Priors
+  gamma ~ dunif(0.5,1)
+}

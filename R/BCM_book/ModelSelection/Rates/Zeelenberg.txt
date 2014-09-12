@@ -1,0 +1,27 @@
+# Zeelenberg
+model{
+  for (i in 1:ns){
+    # Data
+    sb[i] ~ dbin(thetab[i],nb) 
+    sn[i] ~ dbin(thetan[i],nn)
+    # Probit Transformation
+    thetab[i] <- phi(phib[i])
+    thetan[i] <- phi(phin[i])
+    # Individual Parameters 
+    phin[i] ~ dnorm(mu,lambda)
+    alpha[i] ~ dnorm(mualpha,lambdaalpha)
+    phib[i] <- phin[i]+alpha[i]
+  }
+  # Priors
+  mu ~ dnorm(0,1)I(0,) 
+  sigma ~ dunif(0,10) 
+  lambda <- pow(sigma,-2)
+  # Priming Effect
+  sigmaalpha ~ dunif(0,10)
+  lambdaalpha <- pow(sigmaalpha,-2)
+  delta ~ dnorm(0,1)I(0,)
+  mualpha <- delta*sigmaalpha
+  # Sampling from Prior Distribution for Delta
+  deltaprior ~ dnorm(0,1)I(0,)
+}
+

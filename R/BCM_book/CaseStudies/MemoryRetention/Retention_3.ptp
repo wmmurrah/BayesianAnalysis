@@ -1,0 +1,9 @@
+# PCTeX Project File, Version 1.1
+	name: Retention_3
+	texformat: latex
+	typesetmode: DVI
+	spellwordlist: 
+Retention_3.txt
+	wndpos: 1 -1 -1 -8 -30 100 100 1499 756
+	zorder: 0
+	edit: 0

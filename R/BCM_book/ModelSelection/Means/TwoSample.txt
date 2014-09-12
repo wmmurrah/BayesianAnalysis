@@ -1,0 +1,26 @@
+# Two-sample Comparison of Means
+model{ 
+  # Data
+  for (i in 1:n1){
+    x[i] ~ dnorm(mux,lambda)
+  }
+  for (j in 1:n2){
+    y[j] ~ dnorm(muy,lambda)
+  }
+  # Means and precision
+  alpha <- delta*sigma
+  mux <- mu+alpha/2	
+  muy <- mu-alpha/2
+  lambda <- pow(sigma,-2)
+  # delta, mu, and sigma Come From (Half) Cauchy Distributions
+  lambdadelta ~ dchisqr(1)
+  delta ~ dnorm(0,lambdadelta)
+  lambdamu ~ dchisqr(1)
+  mu ~ dnorm(0,lambdamu)
+  lambdasigma ~ dchisqr(1)
+  sigmatmp ~ dnorm(0,lambdasigma)
+  sigma <- abs(sigmatmp)
+  # Sampling from Prior Distribution for Delta
+  lambdadeltaprior ~ dchisqr(1)
+  deltaprior ~ dnorm(0,lambdadeltaprior)
+}

@@ -1,0 +1,14 @@
+# Multinomial Processing Tree
+model{
+  # MPT Category Probabilities for Word Pairs
+  theta[1] <- c * r
+  theta[2] <- (1-c) * pow(u,2)
+  theta[3] <- (1-c) * 2 * u * (1-u)
+  theta[4] <- c * (1-r) + (1-c) * pow(1-u,2)
+  # Data       
+  k[1:4] ~ dmulti(theta[1:4],n)
+  # Priors
+  c ~ dbeta(1,1)
+  r ~ dbeta(1,1)
+  u ~ dbeta(1,1)
+}

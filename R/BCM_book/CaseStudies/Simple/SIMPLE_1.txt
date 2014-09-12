@@ -1,0 +1,32 @@
+# SIMPLE Model
+model{
+  # Observed and Predicted Data
+  for (x in 1:dsets){
+    for (i in 1:listlength[x]){
+      y[i,x] ~ dbin(theta[i,x],n[x])
+      predy[i,x] ~ dbin(theta[i,x],n[x])
+      predpc[i,x] <- predy[i,x]/n[x]
+    }
+  }  
+  # Similarities, Discriminabilities, and Response Probabilities
+  for (x in 1:dsets){
+    for (i in 1:listlength[x]){         
+      for (j in 1:listlength[x]){
+        # Similarities
+        sim[i,j,x] <- exp(-c[x]*abs(log(m[i,x])-log(m[j,x])))
+        # Discriminabilities
+        disc[i,j,x] <- sim[i,j,x]/sum(sim[i,1:listlength[x],x])
+        # Response Probabilities
+        resp[i,j,x] <- 1/(1+exp(-s[x]*(disc[i,j,x]-t[x])))
+      }
+      # Free Recall Overall Response Probability
+      theta[i,x] <- min(1,sum(resp[i,1:listlength[x],x]))
+    }
+  }   
+  # Priors
+  for (x in 1:dsets){
+    c[x] ~ dunif(0,100)
+    s[x] ~ dunif(0,100)
+    t[x] ~ dbeta(1,1)   
+  }
+}

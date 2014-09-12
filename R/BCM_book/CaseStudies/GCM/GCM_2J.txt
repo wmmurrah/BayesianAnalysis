@@ -1,0 +1,44 @@
+# Generalized Context Model With Individual Differences
+model{
+  # Decision Data
+  for (i in 1:nstim){
+    for (k in 1:nsubj){
+      y[i,k] ~ dbin(r[i,k],nt)
+      predy[i,k] ~ dbin(r[i,k],n)
+    }
+    predyg[i] ~ dbin(rpredg[i],n)
+  }		
+  # Decision Probabilities
+  for (i in 1:nstim){
+    for (k in 1:nsubj){
+      r[i,k] <- sum(numerator[i,k,])/sum(denominator[i,k,])
+    }	
+    rpredg[i] <- sum(numeratorpredg[i,])/sum(denominatorpredg[i,])
+  }
+  # Base Decision Probabilities
+  for (i in 1:nstim){
+    for (j in 1:nstim){
+      for (k in 1:nsubj){
+        numerator[i,k,j] <- equals(a[j],1)*b*s[i,k,j]
+        denominator[i,k,j] <- equals(a[j],1)*b*s[i,k,j]+equals(a[j],2)*(1-b)*s[i,k,j]
+      }
+      numeratorpredg[i,j] <- equals(a[j],1)*b*spredg[i,j]
+      denominatorpredg[i,j] <- equals(a[j],1)*b*spredg[i,j]+equals(a[j],2)*(1-b)*spredg[i,j]
+    }
+  } 
+  # Similarities
+  for (i in 1:nstim){
+    for (j in 1:nstim) {
+      for (k in 1:nsubj){
+        s[k,i,j] <- exp(-c[k]*(w[k]*d1[i,j]+(1-w[k])*d2[i,j]))
+      }
+      spredg[i,j] <- exp(-cpredg*(wpredg*d1[i,j]+(1-wpredg)*d2[i,j]))
+    }
+  }
+  # Parameters and Priors
+  for (k in 1:nsubj){
+    c[k] ~ dunif(0,5)
+    w[k] ~ dbeta(1,1)
+  }
+  b <- 0.5 
+}

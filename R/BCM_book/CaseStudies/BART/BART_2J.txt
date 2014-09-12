@@ -1,0 +1,22 @@
+# Hierarchical BART Model of Risky Decision-Making
+model{
+  # Choice Data
+  for (i in 1:nconds){
+    gplus[i] ~ dnorm(mug,lambdag)T(0,)
+    beta[i] ~ dnorm(mub,lambdab)T(0,)
+    omega[i] <- -gplus[i]/log(1-p)
+    for (j in 1:ntrials){
+      for (k in 1:options[i,j]){
+        theta[i,j,k] <- 1-(1/(1+max(-15,min(15,exp(beta[i]*(k-omega[i]))))))
+        d[i,j,k] ~ dbern(theta[i,j,k])
+      }
+    }
+  }
+  # Priors
+  mug ~ dunif(0,10)
+  sigmag ~ dunif(0,10)
+  mub ~ dunif(0,10)
+  sigmab ~ dunif(0,10)
+  lambdag <- 1/pow(sigmag,2)
+  lambdab <- 1/pow(sigmab,2)
+}

@@ -1,0 +1,21 @@
+# One-Sample Order Restricted Comparison of Means
+# With a Hack by Alexander Ly
+model{
+  # Data
+  for (i in 1:ndata){
+    x[i] ~ dnorm(mu,lambda)
+  } 
+  mu <- delta*sigma
+  lambda <- pow(sigma,-2)
+  # delta and sigma Come From (Half) Cauchy Distributions
+  lambdadelta ~ dchisqr(1)
+  deltatmp ~ dnorm(0,lambdadelta)I(0,)
+  # It seems that WinBUGS cannot handle negative truncation when called from R?!
+  delta <- -deltatmp
+  lambdasigma ~ dchisqr(1)
+  sigmatmp ~ dnorm(0,lambdasigma)
+  sigma <- abs(sigmatmp)
+  # Sampling from Prior Distribution for Delta
+  deltapriortmp ~ dnorm(0,lambdadeltaprior)I(,0)
+  lambdadeltaprior ~ dchisqr(1)
+}

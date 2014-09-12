@@ -1,0 +1,19 @@
+# Retention With No Individual Differences
+model{
+  # Observed and Predicted Data
+  for (i in 1:ns){
+    for (j in 1:nt){
+      k[i,j] ~ dbin(theta[i,j],n)
+      predk[i,j] ~ dbin(theta[i,j],n)
+    }
+  }
+  # Retention Rate At Each Lag For Each Subject Decays Exponentially
+  for (i in 1:ns){
+    for (j in 1:nt){
+      theta[i,j] <- min(1,exp(-alpha*t[j])+beta)
+    }
+  }
+  # Priors
+  alpha ~ dbeta(1,1)
+  beta ~ dbeta(1,1)  
+}

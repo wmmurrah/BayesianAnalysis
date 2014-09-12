@@ -1,0 +1,66 @@
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset(datafile, select=c(rcomb1, gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT))#
+head(datafile9)#
+nrow(datafile9)
+Transfer data into a matrix #
+a <- as.matrix(datafile9)#
+#
+#Preliminary manipuation#
+s  <-  prelim.norm(a)#
+#
+#find the MLE for a starting value#
+thetahat <- em.norm(s)#
+#
+#set random number generator seed#
+rngseed(1234567) #
+#Run the NORM program, specifiying the data object, start value, and number of steps#
+theta <- da.norm(s,thetahat,steps=20,showits=TRUE)#
+#
+#Generated Imputed data set using theta#
+IMP.norm<-imp.norm(s,theta,a )#
+IMP.norm<-as.data.frame(IMP.norm)#
+#
+#Conduct Bayesian Regression using imputed data#
+noninf.norm<- MCMCregress(formula=rcomb1~gender+ native+  slang+  ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT, data=IMP.norm, prior.m=0, prior.p=0)
+library(MCMCpack)
+install.packages("norm")#
+require("norm")
+Transfer data into a matrix #
+a <- as.matrix(datafile9)#
+#
+#Preliminary manipuation#
+s  <-  prelim.norm(a)#
+#
+#find the MLE for a starting value#
+thetahat <- em.norm(s)#
+#
+#set random number generator seed#
+rngseed(1234567) #
+#Run the NORM program, specifiying the data object, start value, and number of steps#
+theta <- da.norm(s,thetahat,steps=20,showits=TRUE)#
+#
+#Generated Imputed data set using theta#
+IMP.norm<-imp.norm(s,theta,a )#
+IMP.norm<-as.data.frame(IMP.norm)#
+#
+#Conduct Bayesian Regression using imputed data#
+noninf.norm<- MCMCregress(formula=rcomb1~gender+ native+  slang+  ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT, data=IMP.norm, prior.m=0, prior.p=0)
+summary(noninf.norm)
+library(mi) #
+#Impute data#
+IMP <- mi(datafile9, n.imp=5,n.iter=300, add.noise=FALSE,seed=12345 )#
+#
+#Conduct Bayesian Regression with non informative prior#
+noninf<- Bayesglm.mi.ce(formula=rcomb1~gender+ native+  slang+  ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT, mi.object=IMP, prior.m=0, prior.p=0)
+install.packages("mi")#
+library(mi) #
+#Impute data#
+IMP <- mi(datafile9, n.imp=5,n.iter=300, add.noise=FALSE,seed=12345 )#
+#
+#Conduct Bayesian Regression with non informative prior#
+noninf<- Bayesglm.mi.ce(formula=rcomb1~gender+ native+  slang+  ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT, mi.object=IMP, prior.m=0, prior.p=0)

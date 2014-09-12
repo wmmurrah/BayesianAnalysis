@@ -1,0 +1,22 @@
+require(scatterplot3d)#
+require(pscl)
+x <- seq(0.1,10,by=.001)  #
+y <- c(-1,-0.7,-0.5,-0.2,0.1,0.3,0.6,1.2)  #
+n=8#
+par(mfrow=c(2,2),lwd=2,mar=c(3,3,4,4),cex.axis=.6)#
+#
+# INVERSE-GAMMA(5,3) -- HIGH PRECISION#
+#
+prior = densigamma(x,5,3)  #
+like = densigamma(x,sum(y^2),n/2-1)  #
+and known mean parameter #
+post_propor = prior*like #
+#Approx. posterior density; sum(post)*0.001 = 1#
+post = post_propor / (0.001*sum(post_propor)) #
+plot(x,post,type="l",ylab="Density",lty=1,xlim=c(0,8),ylim=c(0,2.5),#
+     lwd=2,col="gray",#
+     main=paste("Prior is Inverse-Gamma(5,3)"))#
+lines(x,like,lty=2,lwd=2)#
+lines(x,prior,lty=3,lwd=2)#
+legend("topright",c("prior","Likelihood","Posterior"), #
+	lty=c(3,2,1),col=c("black","black","gray"))

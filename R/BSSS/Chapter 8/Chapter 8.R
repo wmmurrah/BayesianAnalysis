@@ -20,7 +20,8 @@ require(coda)
 hlmdata <- read.csv(file.choose(),header=T)     
 
 model_inf <- MCMChregress(fixed=rcomb1~1, random=~1, 				          
-	        group="SCHOOLID", data=hlmdata, burnin=1000, mcmc=10000, thin=10, verbose=1,
+	        group="SCHOOLID", data=hlmdata, burnin=1000, 
+          mcmc=10000, thin=10, verbose=1,
               seed=2012, beta.start=0, sigma2.start=1,
               Vb.start=1, mubeta=500, Vbeta=100,
               r=1, R=diag(100,1,1), nu=0.001, delta=0.001)
@@ -29,7 +30,7 @@ summary(model_inf$mcmc[,1])  #Posterior Mean and SD for the Fixed Effect
 
 summary(model_inf$mcmc[,167:169]) #Posterior Mean and SD for variance components
 
-plot(model_inf$mcmc[,c(1,167)])     #Trace Plots and Density Plots for Selected Fixed Effects
+plot(model_inf$mcmc[,c(1,167)]) #Trace Plots and Density Plots for Selected Fixed Effects
 
 geweke.plot(model_inf$mcmc[,c(1,167)])
 geweke.diag(model_inf$mcmc[,c(1,167)])
@@ -65,11 +66,15 @@ require(MCMCpack)
 
 hlmdata <- read.csv(file.choose(),header=T)     
 
-model_inf <- MCMChregress(fixed=rcomb1~JOYREAD+gender+MEMOR+DISCLIMA+SCHSIZE+TCSHORT+JOYREAD:TCSHORT, 
+model_inf <- MCMChregress(fixed=rcomb1~JOYREAD+gender+MEMOR+DISCLIMA+SCHSIZE+
+                            TCSHORT+JOYREAD:TCSHORT, 
               random=~JOYREAD+gender+MEMOR+DISCLIMA, 				          
-	        group="SCHOOLID",data=hlmdata, burnin=1000, mcmc=100000, thin=100,verbose=1,
+	        group="SCHOOLID",data=hlmdata, burnin=1000, mcmc=100000, 
+          thin=100,verbose=1,
               seed=2012, beta.start=0, sigma2.start=1,
-              Vb.start=1, mubeta=c(484.4,27.84, 14.75,-1.17,-6.63, 0.59,-11.24, -1.45), Vbeta=2*c(66.85,
+              Vb.start=1, 
+          mubeta=c(484.4,27.84, 14.75,-1.17,-6.63, 0.59,-11.24, -1.45), 
+          Vbeta=2*c(66.85,
               3.47, 11.17, 2.58, 3.57, 0.33, 26.23,3.43),
               r=5, R=diag(c(2000,50,1,1,100)), nu=0.001, delta=0.001)
 
@@ -83,7 +88,7 @@ summary(model_inf$mcmc[,834:860])
 #  #Trace Plots and Density Plots for Selected Fixed Effects
 plot(model_inf$mcmc[,c(1,2,6)])    
 
-#------------------------POSTERIOR PREDICTIVE CHECK ----------------------------------#
+#------------------------POSTERIOR PREDICTIVE CHECK ---------------------------#
 
 library(ggplot2)
 library(gridExtra)
@@ -93,7 +98,8 @@ require(MCMCpack)
 set.seed(515)
 ###These grab the data from the MCMC object
 df.hlm <- data.frame(as.matrix(model_inf$mcmc)) 
-var.list <- c(".Intercept.","JOYREAD","gender","MEMOR","DISCLIMA","SCHSIZE","TCSHORT","JOYREAD.TCSHORT")
+var.list <- c(".Intercept.","JOYREAD","gender","MEMOR","DISCLIMA",
+              "SCHSIZE","TCSHORT","JOYREAD.TCSHORT")
 var.list <- paste("beta.",var.list, sep = "")
 eff.list <- c(".Intercept.","JOYREAD","gender","MEMOR","DISCLIMA")
 eff.list <- sapply(eff.list,function(x) paste(x,".",x,sep = ""))
@@ -120,8 +126,10 @@ return(c(sum(val1),sum(val2)))
 }##END function lik.ratio.chi.square
 
 ##Function to calculate the posterior y.reps
-simulate.posterior <- function(x, obs = as.matrix(hlmdata), betas = as.matrix(df.hlm)) {
-obs.cols <- match(c("JOYREAD","gender","MEMOR","DISCLIMA","SCHSIZE","TCSHORT"),attr(obs,"dimnames")[[2]] )
+simulate.posterior <- function(x, obs = as.matrix(hlmdata), 
+                               betas = as.matrix(df.hlm)) {
+obs.cols <- match(c("JOYREAD","gender","MEMOR","DISCLIMA","SCHSIZE","TCSHORT"),
+                  attr(obs,"dimnames")[[2]] )
 obs.x <- obs[,obs.cols]
 obs.x <- cbind(obs.x,as.matrix(obs[,obs.cols[1]] * obs[,obs.cols[6]]))
 pred.x <- cbind(1,obs.x)  %*% as.numeric(betas[x,1:8])
@@ -144,7 +152,9 @@ chi.rep <- posterior.check[,1]
 chi.discrepancy <- posterior.check[,2] - posterior.check[,1] ##get the difference between y.obs and y.rep
 p.value <- round(length(which(chi.discrepancy < 0))/length(chi.discrepancy),3)
 range <- max(chi.discrepancy) - min(chi.discrepancy) ##range
-x.breaks <- c(round(median(chi.discrepancy),1),0,seq(round(range(chi.discrepancy)[1],0),round(range(chi.discrepancy)[2],0),round(range/4,0)))
+x.breaks <- c(round(median(chi.discrepancy),1),0,
+              seq(round(range(chi.discrepancy)[1],0),
+                  round(range(chi.discrepancy)[2],0),round(range/4,0)))
 x.breaks <- x.breaks[order(x.breaks)]
 
 ##SAVE PDF POSTERIOR CHECKING PLOTS
@@ -155,13 +165,16 @@ pdf(file=' ') #####ADD FILE PATH######
 par(ask = FALSE)
 hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")
 abline(v = 0, lty = 2, lwd = 2)
-text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",
+                                                         p.value,sep = ""))
 dev.off()
 pdf(file=' ') #####ADD FILE PATH######
 qplot(chi.obs,chi.rep, shape = I(1)) + 
 geom_abline(slope = 1, intercept = 0) +
 theme_bw() +
-geom_text(aes(x = 100 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +
+geom_text(aes(x = 100 + min(chi.obs,chi.rep) , 
+              y = - 2 + max(chi.obs,chi.rep), 
+              label = paste("p-value =",p.value)), size = 4.5) +
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
 ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + 
 xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +
@@ -171,16 +184,19 @@ dev.off()
 ##DISPLAY POSTERIOR CHECKING PLOTS & INFORMATION
 hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")
 abline(v = 0, lty = 2, lwd = 2)
-text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",
+                                                         p.value,sep = ""))
 par(ask = TRUE)
 qplot(chi.obs,chi.rep, shape = I(1)) + 
 geom_abline(slope = 1, intercept = 0) +
 theme_bw() +
-geom_text(aes(x = 100 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +
+geom_text(aes(x = 100 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), 
+              label = paste("p-value =",p.value)), size = 4.5) +
 #theme(panel.grid.major = element_blank()) +
 ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + 
 xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +
 xlab("Observed") + ylab("Replicated")
 
 ##PRINT OUT MEDIAN DIFFERENCE and P-VALUE
-print(data.frame(Median.Difference = median(chi.discrepancy), p.value = p.value))
+print(data.frame(Median.Difference = median(chi.discrepancy), 
+                 p.value = p.value))

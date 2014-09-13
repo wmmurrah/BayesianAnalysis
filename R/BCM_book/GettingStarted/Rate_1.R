@@ -47,7 +47,8 @@ theta <- samples$sims.list$theta
 # Now let's plot a histogram for theta. 
 # NB. Some the plots will not look good in RStudio.
 # First, some options to make the plot look better:
-par(cex.main = 1.5, mar = c(5, 6, 4, 5) + 0.1, mgp = c(3.5, 1, 0), cex.lab = 1.5,
+par(cex.main = 1.5, mar = c(5, 6, 4, 5) + 0.1, mgp = c(3.5, 1, 0), 
+    cex.lab = 1.5,
     font.lab = 2, cex.axis = 1.3, bty = "n", las=1)
 Nbreaks <- 80
 y       <- hist(theta, Nbreaks, plot=F)

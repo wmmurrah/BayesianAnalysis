@@ -71,4 +71,26 @@ Nbreaks <- 80
 y       <- hist(theta, Nbreaks, plot=F)
 plot(c(y$breaks, max(y$breaks)), c(0,y$density,0), type="S", lwd=2, lty=1,
      xlim=c(0,1), xlab="Rate", ylab="Posterior Density") 
+
 hist(theta, breaks = 80, col='skyblue')
+
+
+# Exercises 3.1.x ---------------------------------------------------------
+
+
+k =0
+n=1
+data <- list(k=k, n=n) # to be passed on to Stan
+
+samples100 <- stan(fit=samples,   
+                data=data, 
+                init=myinits,  # If not specified, gives random inits
+                pars=parameters,
+                iter=4000000, 
+                chains=2, 
+                thin=1,
+                # warmup = 100,  # Stands for burn-in; Default = iter/2
+                # seed = 123  # Setting seed; Default is random seed
+)
+
+theta <- extract(samples100)$theta

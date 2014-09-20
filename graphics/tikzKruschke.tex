@@ -1,0 +1,82 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+% --- this here would go into a package
+
+\tikzset{bayes/pdf/.style={blue!50!white}}
+
+\pgfmathdeclarefunction{gauss}{2}{%
+  \pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+
+\pgfmathdeclarefunction{exponential}{1}{%
+  \pgfmathparse{(#1) * exp(-(#1) * x)}%
+}
+
+\pgfkeys{/tikz/bayes/label/.initial={}}
+\pgfkeys{/tikz/bayes/name/.initial={}}
+\pgfkeys{/tikz/bayes/distribution/.initial={0}}
+\pgfkeys{/tikz/bayes/distribution name/.initial={}}
+
+\tikzstyle{bayes/node}=[]
+
+\newcommand\randomvar[2][1]{%
+  \begingroup
+  \pgfkeys{/tikz/bayes/.cd, #1}%
+  \pgfkeysgetvalue{/tikz/bayes/distribution}{\distribution}%
+  \pgfkeysgetvalue{/tikz/bayes/distribution name}{\distname}%
+  \pgfkeysgetvalue{/tikz/bayes/name}{\parname}%
+  \node[bayes/node] (#2) {
+       \tikz{
+           \begin{axis}[width=4cm, height=3cm,   
+             axis x line=none, 
+             axis y line=none, clip=false]
+             \addplot[blue!50!white, semithick, mark=none, 
+                    domain=-2:2, samples=50, smooth] {\distribution};
+             \addplot[black, yshift=-4pt]  coordinates { (-2, 0) (2, 0) };
+             \node at (rel axis cs: 0.5, 0.5) {\parname};
+             \node[anchor=south] at (rel axis cs: 0.5, 0) {\sffamily\tiny\distname};
+          \end{axis}
+       }
+  };
+  \endgroup
+}
+
+
+
+% --- this here would be code written by the user
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=3cm and 2cm, >=stealth]
+
+\randomvar[distribution={gauss(0,0.5)}, 
+                name=$M_0$, 
+                distribution name=normal]{M0}
+\randomvar[distribution={gauss(0,0.5)}, 
+                distribution name=normal, 
+                name=$M_1$,
+                node/.style={right of=M0}]{M1}
+
+\node[below of=M1] (eqn) { $\beta_0 + \beta_1 \mathbf{x}_i$ };
+
+\randomvar[distribution={exponential(3)}, 
+                distribution name=exponential,
+                name=$M_2$,
+                node/.style={right of=eqn}]{M2}
+
+\randomvar[distribution={gauss(0,0.5)}, 
+                distribution name=normal, 
+                node/.style={below of=eqn}]{M3}
+
+
+\draw[->] (eqn) -- node [anchor=east] {$=$} (M3.center);          
+\draw[->] (M0.south) -- node [anchor=east] {$\sim$} (eqn.north west);
+\draw[->] (M1.south) -- node [anchor=east] {$\sim$} (eqn);
+\draw[->] (M2.south) -- node [anchor=east] {$\sim$} (M3);
+
+\end{tikzpicture}   
+
+\end{document}

@@ -1,0 +1,61 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template graphical model   %
+% Author: Tom Lodewyckx    
+% Modified by: William Murrah
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{report}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+% 0. Begin document
+%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100, minimum size=10mm]
+
+
+
+% 1. Grid
+%%%%%%%%%
+
+
+% 2. Nodes
+%%%%%%%%%%
+\node[box, fill=black!10] (K) {K};
+\node[box, fill=black!10] (N) [right=of K] {N};
+\node[main, fill=white!100, double] (theta) [above=of K] {$\theta$};
+\node[main, fill=white!100] (ptheta) [above=of N] {$\theta \%$}; 
+\node [anchor=east, text width=6cm] (dists) at (10, 1.5) {
+          $K \sim Binomial(\theta, N)$\\
+          $\theta = \theta \% / 100$ \\
+          $\theta \% \sim Uniform(0, 100)$};
+% 3. Arrows
+%%%%%%%%%%%
+\path (N)      edge [connect] (K)
+      (theta)  edge [connect] (K)
+      (ptheta) edge [connect] (theta);
+
+
+% 4. Plates
+%%%%%%%%%%%
+
+
+
+
+% 5. Model specification
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 6. End document
+%%%%%%%%%%%%%%%%%
+
+\end{tikzpicture}
+% \parbox[t]{5cm}
+%      {$K \sim Binomial(\theta, N)$\\
+%       $\theta = \theta \% / 100$ \\
+%       $\theta \% \sim Uniform(0, 100)$}
+\end{figure}
+\end{document}

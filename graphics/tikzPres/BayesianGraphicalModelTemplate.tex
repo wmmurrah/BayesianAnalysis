@@ -1,0 +1,28 @@
+\documentclass[tikz ,border=30pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning, arrows, intersections}
+\usepackage{verbatim}
+\begin{document}
+\centering
+\begin{tikzpicture}
+\tikzstyle{circ}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{sqr}=[rectangle, draw=black!100, minimum size=10mm]
+\baselineskip=32pt
+% 2. Nodes
+%%%%%%%%%%
+\node[sqr, fill=black!10] (K) at (1,0) {K};
+\node[sqr, fill=black!10] (N) [below=of K] {N};
+\node[circ, fill=white!100] (theta) [above=of K] {$\theta$};
+
+\node [text width=4cm] (dists) [right=of K] {
+          $\theta = $ Beta (1,1)\\[1em]
+          K $\sim $ Binomial($\theta$, N)} ;
+% 3. Arrows
+%%%%%%%%%%%
+\path (N)      edge [connect] (K)
+      (theta)  edge [connect] (K);
+
+\end{tikzpicture}
+
+\end{document}

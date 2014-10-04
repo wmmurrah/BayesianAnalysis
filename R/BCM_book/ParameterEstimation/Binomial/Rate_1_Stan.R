@@ -69,4 +69,3 @@ Nbreaks <- 80
 y       <- hist(theta, Nbreaks, plot=F)
 plot(c(y$breaks, max(y$breaks)), c(0,y$density,0), type="S", lwd=2, lty=1,
      xlim=c(0,1), xlab="Rate", ylab="Posterior Density") 
-

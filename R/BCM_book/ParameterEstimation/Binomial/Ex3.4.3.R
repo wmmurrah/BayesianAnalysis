@@ -1,6 +1,7 @@
 # clears workspace: 
 rm(list=ls())
 
+library(rstan)
 model <- "
 // Prior and Posterior Prediction
 data {

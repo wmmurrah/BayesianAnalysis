@@ -1,0 +1,25 @@
+model
+{
+ for(i in 1:9249)
+  {
+   for(t in 1:2)
+    {
+     y[i,t]~dnorm(mu[i,t],sigma2inv)
+     mu[i,t]<-alpha[i]+alpha1*sex[i]+alpha2[i]*internet[i,t]       
+    }
+  alpha[i]~dnorm(alpha0,tau2inv)
+  alpha2[i]~dnorm(alpha20,tau20inv)
+  }
+alpha0~dnorm(0,1.0E-4)
+alpha1~dnorm(0,1.0E-4)
+alpha20~dnorm(0,1.0E-4)
+
+sigma2inv~dgamma(.01,.01)
+sigma2<-1/sqrt(sigma2inv)
+
+tau2inv~dgamma(.01,.01)
+tau2<-1/sqrt(tau2inv)
+
+tau20inv~dgamma(.01,.01)
+tau20<-1/sqrt(tau20inv)
+}

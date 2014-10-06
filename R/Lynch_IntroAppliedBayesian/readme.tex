@@ -1,0 +1,61 @@
+\documentclass[12pt,titlepage]{article}
+\usepackage{graphicx,dcolumn,amsmath}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\textheight}{9in}
+
+
+\begin{document}
+\begin{center}
+Programs and Data for \\
+\it Introduction to Applied Bayesian Statistics and Estimation for Social Scientists\rm
+\end{center}
+
+\vspace{.3in}
+
+This directory contains the programs and the data used in in the book.  All data are in freefield ASCII format.  You may need to change the name of the data in each \tt R \rm program.  
+
+\vspace{.3in}
+\footnotesize
+\begin{center}
+\begin{tabular}{llll}
+Program   &Program Purpose &Data?  &Data Set Name \rm\\\hline \hline
+\\
+p83.r   &inversion sampling, linear density     &NO\\
+p85.r   &rejection sampling, linear density     &NO\\
+p90.r   &Gibbs sampling using inversion, planar density     &NO\\
+p96.r   &Gibbs sampling using rejection, planar density     &NO\\
+p99.r   &Gibbs sampling, bivariate normal density     &NO\\
+p102.r  &Gibbs sampling, $\mu | \sigma$ and $\sigma$, normal density   &YES   &education.dat\\
+p103.r  &Gibbs sampling, $\mu | \sigma$ and $\sigma | \mu$, normal density   &YES   &education.dat\\
+p115.r  &Random Walk Metropolis (RWM) sampling, linear density     &NO\\
+p119.r  &RWM sampling, correlation parameter     &NO\\
+p124.r  &Gibbs/RWM sampling, bivariate normal    &NO\\
+p127.r  &Gibbs sampling, bivariate normal (matrix approach)     &NO\\
+p168.r  &RWM sampling, OLS regression     &YES   &olsexamp.dat \rm\\
+p171.r  &Gibbs sampling, OLS regression (full conditionals)    &YES   &olsexamp.dat\\
+p173.r  &Gibbs sampling, OLS regression (composition)     &YES   &olsexamp.dat\\
+p199.r  &Gibbs sampling, dichotomous probit     &YES   &bookdead.dat\\
+p222.r  &Gibbs sampling, ordinal/polytomous probit     &YES   &bookheal.dat\\
+p237.r  &Gibbs sampling, hierarchical model (election data)     &NO\\
+p245.r  &Gibbs sampling, basic random effects (RE) model     &YES   &internetexamp.dat\\
+p246.wb &Gibbs sampling, RE model in WinBugs     &YES   &internetexampwb.dat\\
+p248.wb &Gibbs sampling, RE model in WinBugs     &YES   &wagessexwb.dat\\
+p250.wb &Gibbs sampling, random intercept model in WinBugs     &YES  &wagessexinterwb.dat\\
+p253.wb &Gibbs sampling, random coefficient model in WinBugs     &YES  &wagessexinterwb.dat\\
+p255.wb &Gibbs sampling, random coefficient model in WinBugs     &YES  &wagessexinterwb.dat\\
+p259.wb &Gibbs sampling, growth model in WinBugs     &YES  &gcexampwb.dat\\
+p276.r  &Gibbs sampling, multivariate regression     &YES  &mvnexamp.dat\\
+p285.r  &MVN sampling using conditional decomposition     &NO\\
+p286.r  &truncated MVN sampling: decomposition vs. naive methods     &NO\\
+p297.r  &Gibbs samplinig, multivariate probit  &YES  &mvnprob.dat1\\
+p302.r  &Posterior Predictive Simulation from probit     &YES  &use output from p297.r\\
+p308.r  &Gibbs sampling, multivariate probit    &YES  &mvnprob.dat2\\
+p312.r  &Multistate life tables     &YES  &use output from p308.r\\ \\ \hline
+\end{tabular}
+\end{center}
+\end{document}

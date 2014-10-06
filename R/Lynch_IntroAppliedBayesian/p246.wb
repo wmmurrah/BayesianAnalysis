@@ -1,0 +1,19 @@
+#Winbugs program for simple random effects model
+model
+{
+ for(i in 1:9249)
+  {
+   for(j in 1:2)
+    {
+     y[i,j]~dnorm(alpha[i],sigma2inv)       
+    }
+  alpha[i]~dnorm(malpha,tau2inv)
+  }
+malpha~dnorm(0,1.0E-4)
+
+tau2inv~dgamma(.01,.01)
+tau2<-1/sqrt(tau2inv)
+
+sigma2inv~dgamma(.01,.01)
+sigma2<-1/sqrt(sigma2inv)
+}

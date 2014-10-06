@@ -8,7 +8,7 @@ library(R2jags)
 # JAGS 3.2.0+ seems to work, but 3.1.0 did not
 
 nmax <- 500
-k    <- c(16,18,22,25,27)
+k    <- c(16,18,22,25,28)
 m    <- length(k)
 
 data <- list("nmax", "k", "m") # to be passed on to JAGS

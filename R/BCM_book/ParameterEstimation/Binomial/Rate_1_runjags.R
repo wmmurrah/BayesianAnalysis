@@ -9,12 +9,22 @@ rm(list=ls())
 # sets working directories:
 setwd("C:/Users/EJ/Dropbox/EJ/temp/BayesBook/test/ParameterEstimation/Binomial")
 
-library(R2jags)
+library(runjags)
 
 k <- 5
 n <- 10
 
-data <- list("k", "n") # to be passed on to JAGS
+model <- '
+# Inferring a Rate
+model{
+   # Prior Distribution for Rate Theta
+   theta ~ dbeta(1,1)
+   # Observed Counts
+   k ~ dbin(theta,n)
+}
+'
+
+data <- list(k=k, n=n) # to be passed on to JAGS
 
 myinits <- list(
   list(theta = 0.1), #chain 1 starting value
@@ -25,16 +35,16 @@ parameters <- c("theta")
 
 # The following command calls JAGS with specific options.
 # For a detailed description see the R2jags documentation.
-samples <- jags(data, inits=myinits, parameters,
-	 			 model.file ="Rate_1.txt", n.chains=2, n.iter=20000, 
-         n.burnin=1, n.thin=1, DIC=T)
+samples <- run.jags(model=model, monitor='theta', data=data, inits=myinits, 
+                     n.chains=2, sample=20000, 
+                  burnin=1, thin=1)
 # Now the values for the monitored parameters are in the "samples" object, 
 # ready for inspection.
 
 # The commands below are useful for a quick overview:
 print(samples)  # a rough summary
 plot(samples)   # a visual representation
-plot(samples) # traceplot (press <enter> repeatedly to see the chains)
+traceplot(samples) # traceplot (press <enter> repeatedly to see the chains)
 
 #more info on what is returned:
 summary(samples)

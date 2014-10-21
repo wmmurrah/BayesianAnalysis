@@ -1,0 +1,208 @@
+---
+title: "Title"
+author: "William Murrah"
+date: "10/06/2014"
+output: pdf_document
+---
+
+```{r opts}
+library(knitr)
+
+```
+
+
+```{r}
+library(psych)
+library(xtable)
+options(xtable.comment = FALSE)
+x = -1000:1000
+y = function(x) 1/x
+plot(x,y(x), type='l')
+
+```
+$$\lim_{x \to \infty}, \frac{1} {x}$$
+
+```{r}
+x = 1000:-1000
+y = function(x) 1/x
+plot(x,y(x), type='l')
+```
+
+```{r}
+x = -1000:1000
+y = function (x) (x^2 + 5)/3
+plot(x, y(x), type='l')
+
+```
+
+```{r}
+x = 1000:-1000
+y = function (x) (x^2 - 1)/5
+plot(x, y(x), type='l')
+
+```
+
+
+```{r}
+x = -1000:1000
+y = function (x) exp(-x)
+plot(x, y(x), type='l')
+
+```
+
+```{r}
+x = 1000:-1000
+y = function (x) exp(-x)
+plot(x, y(x), type='l')
+
+```
+
+```{r}
+x = -1000:1000
+y = function (x) x/2*x
+plot(x, y(x), type='l')
+
+```
+
+```{r}
+x = -1000:1000
+mu = 0
+sigma = 1:2001
+y = function (x) 1/(sigma*sqrt(2*pi)*(-(x - 0)^2)/(2*sigma^2))
+plot(x, y(x), type='l')
+
+```
+
+
+
+## Matix Algebra
+
+```{r}
+
+A = matrix(c(3,-1,2,3), nrow=2)
+A
+B = matrix(c(3,4,10,1,3,4,-1,5,1), nrow=3)
+B
+C = matrix(c(1,7,4),nrow=1)
+C
+D = matrix(c(2,9,3), nrow=3)
+D
+E = matrix(c(4,7,6, 1,1,8, 3,8,7), nrow=3)
+E
+```
+
+```{r, results='asis'}
+BE <- B + E
+print(xtable(BE, digits=0, caption="$B + E$"))
+```
+
+```{r}
+E - B
+```
+
+```{r}
+# A%*%B non-conformable 
+```
+```{r}
+C %*% D
+```
+```{r}
+D %*% C
+```
+
+```{r}
+# D %*% E non-conformable
+```
+
+```{r}
+t(E)
+```
+
+```{r}
+det(A)
+```
+
+```{r}
+det(B)
+```
+
+```{r}
+solve(E)
+```
+
+```{r}
+tr(B)
+```
+
+
+## Chapter 2
+
+1.
+
+2. Probability of finding 3 heads in a row:
+
+```{r}
+
+.5 * .5 * .5
+```
+
+3. Probability of finding 3 heads in a row with bend coin (p = .7)
+```{r}
+.7 * .7 * .7
+
+# or 
+
+.7^3
+```
+
+4. 3 heads or 3 tails in a row
+```{r}
+.5^3 + .5^3
+
+```
+
+5. 3 heads and one tail (order irrelevant):
+
+$$ {n \choose k} p^k(1-p^{n-k})$$
+
+```{r}
+choose(4,3)*(.5^3 * .5^1)
+```
+
+6. normal approximation of binomial:
+
+$$ \mu_x = np, \quad \sigma_x = \sqrt{np(1 - p)}$$
+
+```{r}
+
+mu = 200*.5
+sigma.x = sqrt(200*.5*(1 - .5))
+z = (130 - mu)/ sigma.x
+```
+
+
+7. Plot a normal distribution with parameters $\mu = 5$ and $\sigma = 2$.
+```{r}
+plot(seq(0, 10, by=.1), dnorm(seq(0, 10, by=.1), 5,2), type='l')
+```
+
+8. Plot a normal distribution with parameters $\mu = 2$ and $\sigma = 5$.
+
+```{r}
+plot(seq(-6,10, by=.1), dnorm(seq(-6,10,by=.1), 2,5), type='l')
+```
+
+8. Plot a normal distribution with parameters $\mu = 2$ and $\sigma = 5$.
+9. Plot the t(0, 1, df = 1) and t(0, 1, df = 10) distributions. Note: $\Gamma$ is a
+function. The function is: $\Gamma (n) = e^{-u} u^{n-1}du$. For integers, 
+$\Gamma (n) = 0(n - 1)$ Thus, $\Gamma (4) = (4 - 1)! = 6$. However, when the argument to the
+function is not an integer, this formula will not work. Instead, it is easier
+to use a software package to compute the function value for you.
+
+
+```{r}
+
+```
+
+
+

@@ -1,0 +1,77 @@
+---
+title: "Principles of Bayesian Statistics"
+author: "William Murrah"
+date: "10/17/2014"
+output: 
+   pdf_document:
+      includes:
+         in_header: header.tex
+---
+
+```{r opts}
+library(knitr)
+opts_knit$set(root.dir='../../')
+getwd()
+```
+
+## Bayes Theorem:
+
+$$
+p(B | A) = \frac{p(A|B)p(A)}{p(A)}.
+$$
+
+**proof:**
+
+We know that $p(A,B) = p(A|B)p(B)$ and $p(B,A) = p(B|A)p(A)$. We also know that $p(A,B) = p(B,A)$. Therefore we know:
+
+$$
+p(B|A)p(A) = p(A|B)p(B).
+$$
+
+If we divide both sides of this equation by $p(A)$, we get Bayes Theorem.
+
+
+# Polling Example
+
+This example is taken from Chapters 1 and 2 of *Introduction to Applied Bayesian Statistics adn Estimation for Social Scientists* by Scott Lynch.
+
+```{r}
+K <- seq(0,1, .01)
+
+posterior <- qbeta(K, 1498, 1519)
+prior <- qbeta(K, 942, 1008)
+likelihood <- qbeta(K, 557, 512)
+plot(density(posterior), xlim=c(.4,.6),
+     main='Prior, Posterior, and Likelihood Densities for Polling Example',
+     ylab='f(K)', xlab='K')
+abline(v=.5, lty=17)
+lines(density(prior), col='blue', lty=15 )
+lines(density(likelihood), col='red', lty=20)
+text(.56, 15, "Likelihood", col='red')
+text(.52, 35, "Posterior", col='black')
+text(.46, 22, "Prior", col='blue')
+```
+
+\centering
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100, minimum size=10mm]
+
+% 2. Nodes
+%%%%%%%%%%
+\node[box, fill=black!10] (K) {K};
+\node[box, fill=black!10] (N) [right=of K] {N};
+\node[main, fill=white!100, double] (theta) [above=of K] {$\theta$};
+\node[main, fill=white!100] (ptheta) [above=of N] {$\theta \%$}; 
+\node [anchor=east, text width=4cm] (dists) at (10, 1.5) {
+          $K \sim Binomial(\theta, N)$\\
+          $\theta = \theta \% / 100$ \\
+          $\theta \% \sim Uniform(0, 100)$};
+% 3. Arrows
+%%%%%%%%%%%
+\path (N)      edge [connect] (K)
+      (theta)  edge [connect] (K)
+      (ptheta) edge [connect] (theta);
+
+\end{tikzpicture}

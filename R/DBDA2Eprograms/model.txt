@@ -1,0 +1,20 @@
+
+  model {
+    for ( i in 1:Ntotal ) {
+      y[i] ~ dbin( mu[i] , N[i] )
+      mu[i] ~ dbeta( omega[x[i]]*(kappa-2)+1, (1-omega[x[i]])*(kappa-2)+1 )
+    }
+    for ( j in 1:NxLvl ) { 
+      omega[j] <- ilogit( a0 + a[j] ) # In JAGS, ilogit is logistic
+      a[j] ~ dnorm( 0.0 , 1/aSigma^2 )
+    } 
+    a0 ~ dnorm( 0.0 , 1/2^2 ) 
+    aSigma ~ dgamma( 1.64 , 0.32 )  # mode=2, sd=4
+    kappa <- kappaMinusTwo + 2
+    kappaMinusTwo ~ dgamma( 0.01 , 0.01 )  # mean=1 , sd=10 (generic vague)
+    # Convert a0,a[] to sum-to-zero b0,b[] :
+    for ( j in 1:NxLvl ) { m[j] <- a0 + a[j] } # cell means 
+    b0 <- mean( m[1:NxLvl] )
+    for ( j in 1:NxLvl ) { b[j] <- m[j] - b0 }
+  }
+  

@@ -1,0 +1,13 @@
+DATA:
+FILE = "mplus/height/height0.dat";
+ 
+VARIABLE:
+NAMES = height; 
+ MISSING=.;
+ 
+ANALYSIS:
+estimator = bayes;
+MODEL:
+[height](mu);
+MODEL PRIORS:
+mu~N(178,20);

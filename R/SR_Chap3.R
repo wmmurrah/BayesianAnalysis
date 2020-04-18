@@ -1,0 +1,26 @@
+
+## R code 3.27
+library(rethinking)
+p_grid <- seq(0, 1, length.out = 1000)
+prior <- rep(1, 1000)
+likelihood <- dbinom(6, 9, p_grid)
+posterior <- likelihood * prior
+posterior <- posterior/sum(posterior)
+
+set.seed(100)
+samples <- sample(p_grid, prob = posterior, size = 1e4,
+                  replace = TRUE)
+
+simplehist(samples)
+
+
+quantile(samples, .8)
+
+HPDI(samples, .5)
+
+sum(samples < .2)/length(samples)
+mean(samples < .2)
+mean(samples > .8)
+
+mean(samples > .2 & samples < .8)
+

@@ -458,6 +458,7 @@ m4.3b <- quap(
 ## R code 4.44
 precis( m4.3 )
 
+
 ## R code 4.45
 round( vcov( m4.3 ) , 3 )
 
